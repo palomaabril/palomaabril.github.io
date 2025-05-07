@@ -13,15 +13,43 @@
     <![endif]-->
     <link rel="stylesheet" href="stylesheets/styles.css">
     <style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
+
+  .wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
   header {
     width: 200px;
     float: left;
     margin-right: 40px;
   }
+
   section {
     overflow: hidden;
   }
+
+  @media (max-width: 768px) {
+    header {
+      float: none;
+      width: 100%;
+      margin-right: 0;
+      text-align: center;
+    }
+
+    section {
+      float: none;
+      width: 100%;
+    }
+  }
 </style>
+
   </head>
   <body>
     <div class="wrapper">
