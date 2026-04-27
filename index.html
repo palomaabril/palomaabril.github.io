@@ -339,27 +339,62 @@
 
     .image-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
     }
 
-    .image-grid figure {
+    .image-option {
       margin: 0;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      text-align: left;
+      cursor: pointer;
+      color: inherit;
+      font: inherit;
     }
 
-    .image-grid img {
+    .image-option img {
       width: 100%;
       border-radius: 12px;
       display: block;
       border: 0.5px solid var(--line);
       background: var(--panel);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
     }
 
-    .image-grid figcaption {
+    .image-option.active img {
+      border: 2px solid var(--accent);
+    }
+
+    .image-option span {
+      display: block;
       font-family: var(--mono);
       font-size: 11px;
       color: var(--muted);
       margin-top: 5px;
+    }
+
+    .selected-image {
+      margin: 16px 0 0;
+    }
+
+    .selected-image img {
+      width: 100%;
+      max-height: 480px;
+      object-fit: contain;
+      display: block;
+      border-radius: 12px;
+      border: 0.5px solid var(--line);
+      background: var(--panel);
+    }
+
+    .selected-image figcaption {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
     }
 
     .legend {
@@ -632,21 +667,26 @@
               </div>
 
               <div class="image-grid">
-                <figure>
-                  <img src="assets/images/qgis2018.png" alt="Satellite image before deforestation, 2018">
-                  <figcaption>Before &middot; 2018</figcaption>
-                </figure>
+                <button class="image-option active" type="button" data-image="assets/images/qgis2018.png" data-label="Before &middot; 2018" data-alt="Satellite image before deforestation, 2018">
+                  <img src="assets/images/qgis2018.png" alt="">
+                  <span>Before &middot; 2018</span>
+                </button>
 
-                <figure>
-                  <img src="assets/images/qgis2024.png" alt="Satellite image after deforestation, 2024">
-                  <figcaption>After &middot; 2024</figcaption>
-                </figure>
+                <button class="image-option" type="button" data-image="assets/images/qgis2024.png" data-label="After &middot; 2024" data-alt="Satellite image after deforestation, 2024">
+                  <img src="assets/images/qgis2024.png" alt="">
+                  <span>After &middot; 2024</span>
+                </button>
 
-                <figure>
-                  <img src="assets/images/qgis_2024_area.png" alt="Measured deforestation area">
-                  <figcaption>Measured deforestation area</figcaption>
-                </figure>
+                <button class="image-option" type="button" data-image="assets/images/qgis_2024_area.png" data-label="Measured deforestation area" data-alt="Measured deforestation area">
+                  <img src="assets/images/qgis_2024_area.png" alt="">
+                  <span>Measurement</span>
+                </button>
               </div>
+
+              <figure class="selected-image">
+                <img id="selected-qgis-image" src="assets/images/qgis2018.png" alt="Satellite image before deforestation, 2018">
+                <figcaption id="selected-qgis-caption">Before &middot; 2018</figcaption>
+              </figure>
             </div>
           </div>
         </div>
@@ -769,6 +809,19 @@
     document.querySelectorAll(".theme-button").forEach(button => {
       button.addEventListener("click", () => {
         document.documentElement.style.setProperty("--accent", button.dataset.color);
+      });
+    });
+
+    document.querySelectorAll(".image-option").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".image-option").forEach(option => {
+          option.classList.remove("active");
+        });
+
+        button.classList.add("active");
+        document.getElementById("selected-qgis-image").src = button.dataset.image;
+        document.getElementById("selected-qgis-image").alt = button.dataset.alt;
+        document.getElementById("selected-qgis-caption").innerHTML = button.dataset.label;
       });
     });
 
