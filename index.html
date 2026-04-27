@@ -178,6 +178,12 @@
       line-height: 1.55;
     }
 
+    .project .eyebrow,
+    .project .smallcaps {
+      color: var(--text);
+      font-size: 13px;
+    }
+
     h1,
     h2,
     h3 {
@@ -395,6 +401,106 @@
       font-size: 11px;
       color: var(--muted);
       margin-top: 6px;
+    }
+
+    .results-card {
+      margin-top: 18px;
+      background: var(--white-panel);
+      border-radius: 16px;
+      padding: 18px;
+      border: 0.5px solid var(--line);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .results-button {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      cursor: zoom-in;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+    }
+
+    .results-button img {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+      border: 0.5px solid var(--line);
+      background: var(--panel);
+    }
+
+    .results-button span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .results-explanation {
+      margin: 14px 0 0;
+      color: #4D4942;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(26, 26, 26, 0.72);
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-content {
+      width: min(1120px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      border-radius: 16px;
+      background: var(--background);
+      padding: 18px;
+      border: 0.5px solid var(--line);
+    }
+
+    .modal-content img {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    .modal-close {
+      float: right;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      padding: 6px 11px;
+      text-transform: uppercase;
+    }
+
+    .modal-caption {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
     }
 
     .legend {
@@ -687,6 +793,37 @@
                 <img id="selected-qgis-image" src="assets/images/qgis2018.png" alt="Satellite image before deforestation, 2018">
                 <figcaption id="selected-qgis-caption">Before &middot; 2018</figcaption>
               </figure>
+
+              <div class="results-card">
+                <h3>Results</h3>
+                <div class="results-grid">
+                  <button class="results-button" type="button" data-results-image="assets/images/did_MORENA_with_without_PSM1.png" data-results-title="MORENA vote share" data-results-alt="Coefficient estimates for MORENA vote share and distance to the Mayan Train">
+                    <img src="assets/images/did_MORENA_with_without_PSM1.png" alt="">
+                    <span>MORENA vote share</span>
+                  </button>
+
+                  <button class="results-button" type="button" data-results-image="assets/images/defo_did_proximity.png" data-results-title="Deforestation exposure" data-results-alt="Coefficient estimates for exposure to deforestation and MORENA vote share">
+                    <img src="assets/images/defo_did_proximity.png" alt="">
+                    <span>Deforestation exposure</span>
+                  </button>
+
+                  <button class="results-button" type="button" data-results-image="assets/images/companies_treatment_good.png" data-results-title="New companies" data-results-alt="Coefficient estimates for new companies and MORENA vote share">
+                    <img src="assets/images/companies_treatment_good.png" alt="">
+                    <span>New companies</span>
+                  </button>
+
+                  <button class="results-button" type="button" data-results-image="assets/images/ejidos_matched_unmatched.png" data-results-title="Ejido expropriation" data-results-alt="Coefficient estimates for ejido expropriation and MORENA vote share">
+                    <img src="assets/images/ejidos_matched_unmatched.png" alt="">
+                    <span>Ejido intersections</span>
+                  </button>
+                </div>
+                <p class="results-explanation">
+                  Proximity to the Mayan Train had opposite electoral consequences across the route. In the first half, sections closer to the line experienced larger increases in MORENA's vote share after construction, consistent with economic voting: moving from 10 km away to immediate proximity corresponds to an estimated increase of about 1.7 percentage points, and 4.2 percentage points in the matched model. In the second half, proximity is associated with lower support for MORENA, with nearby communities penalizing the incumbent by roughly 3-4 percentage points. The opposition-party results indicate that PAN gained vote share in the second half, while PRI effects are not statistically significant and PVEM gains did not offset MORENA's losses once coalition totals are considered.
+                </p>
+                <p class="results-explanation">
+                  The mechanism figures point to why the two halves diverged. New firm creation is associated with higher support for MORENA in the first half, but not in the second half, suggesting that localized economic activation mattered where environmental costs were less politically salient. By contrast, exposure to deforestation is associated with lower support for the incumbent, especially where forest loss was visible and widespread; one square kilometer of deforestation corresponds to almost a one-point loss in vote share. Sections where communal lands were expropriated show increased support for MORENA, consistent with the argument that direct compensation can turn project exposure into electoral reward even amid broader environmental damage.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -779,6 +916,18 @@
     </section>
   </main>
 
+  <div class="modal" id="results-modal" aria-hidden="true" role="dialog" aria-label="Results figure">
+    <div class="modal-content">
+      <button class="modal-close" id="close-results" type="button">Close</button>
+      <h3 id="results-modal-title">Results</h3>
+      <p class="modal-caption" id="results-modal-caption"></p>
+      <img id="results-modal-image" src="assets/images/did_MORENA_with_without_PSM1.png" alt="Coefficient estimates for MORENA vote share and distance to the Mayan Train">
+      <p class="results-explanation">
+        These figures summarize the main electoral results and mechanisms. Click outside this panel or use Close to return to the project page.
+      </p>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
@@ -823,6 +972,30 @@
         document.getElementById("selected-qgis-image").alt = button.dataset.alt;
         document.getElementById("selected-qgis-caption").innerHTML = button.dataset.label;
       });
+    });
+
+    const resultsModal = document.getElementById("results-modal");
+    document.querySelectorAll(".results-button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.getElementById("results-modal-image").src = button.dataset.resultsImage;
+        document.getElementById("results-modal-image").alt = button.dataset.resultsAlt;
+        document.getElementById("results-modal-title").textContent = button.dataset.resultsTitle;
+        document.getElementById("results-modal-caption").textContent = button.dataset.resultsTitle;
+        resultsModal.classList.add("open");
+        resultsModal.setAttribute("aria-hidden", "false");
+      });
+    });
+
+    document.getElementById("close-results").addEventListener("click", () => {
+      resultsModal.classList.remove("open");
+      resultsModal.setAttribute("aria-hidden", "true");
+    });
+
+    resultsModal.addEventListener("click", event => {
+      if (event.target === resultsModal) {
+        resultsModal.classList.remove("open");
+        resultsModal.setAttribute("aria-hidden", "true");
+      }
     });
 
     let mayanMap;
