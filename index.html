@@ -332,6 +332,41 @@
       background: var(--panel);
     }
 
+    #ecuador-map {
+      height: 560px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 0.5px solid var(--line);
+      background: var(--panel);
+    }
+
+    .map-toggle {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .map-toggle button {
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font: inherit;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      padding: 7px 11px;
+      text-transform: uppercase;
+    }
+
+    .map-toggle button.active,
+    .map-toggle button:hover {
+      background: var(--accent);
+      color: var(--background);
+    }
+
     .section-stats {
       font-family: var(--mono);
       font-size: 12px;
@@ -577,6 +612,10 @@
       }
 
       #mayan-map {
+        height: 440px;
+      }
+
+      #ecuador-map {
         height: 440px;
       }
     }
@@ -894,6 +933,35 @@
           <p>
             In areas without oil extraction, women were significantly more likely than men to support halting extraction. However, this gender gap disappears in extractive regions, where both men and women show higher support for continued extraction. A follow-up survey explores whether material incentives or environmental motivations explain these patterns.
           </p>
+
+          <div class="map-card">
+            <h3>Yasuní referendum maps</h3>
+            <p>
+              Choose a layer and click a parroquia to see the 2023 Yes vote, male and female Yes vote shares, and the gender gap.
+            </p>
+
+            <div class="map-toggle" aria-label="Ecuador map layer selector">
+              <button class="ecuador-map-toggle active" type="button" data-layer="yes">Yes vote</button>
+              <button class="ecuador-map-toggle" type="button" data-layer="gap">Gender gap</button>
+            </div>
+
+            <div id="ecuador-map"></div>
+
+            <div class="legend" id="ecuador-legend">
+              <div class="legend-row">
+                <span class="legend-swatch" style="background:#F7E6B5"></span>
+                lower Yes vote
+              </div>
+              <div class="legend-row">
+                <span class="legend-swatch" style="background:#2D7F5E"></span>
+                higher Yes vote
+              </div>
+            </div>
+
+            <p class="map-note" id="ecuador-map-note">
+              Layer: percentage of Yes vote in the 2023 Yasuní referendum by parroquia.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -989,6 +1057,9 @@
       if (id === "research" && window.mayanMap) {
         setTimeout(() => {
           window.mayanMap.invalidateSize();
+          if (window.ecuadorMap) {
+            window.ecuadorMap.invalidateSize();
+          }
         }, 150);
       }
 
@@ -1221,7 +1292,130 @@
         });
     }
 
+    let ecuadorMap;
+    let ecuadorLayer;
+    let ecuadorData;
+    let ecuadorMode = "yes";
+
+    function interpolateColor(value, min, max, start, end) {
+      if (value === null || Number.isNaN(value)) return "#E8E2D0";
+      const t = Math.max(0, Math.min(1, (value - min) / (max - min)));
+      const rgb = start.map((channel, index) => Math.round(channel + t * (end[index] - channel)));
+      return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+    }
+
+    function colorEcuador(feature) {
+      const p = feature.properties;
+      if (ecuadorMode === "gap") {
+        const value = Number(p.gender_gap_m_minus_f);
+        if (Number.isNaN(value)) return "#E8E2D0";
+        const cap = 20;
+        if (value < 0) return interpolateColor(value, -cap, 0, [33, 102, 172], [247, 247, 247]);
+        return interpolateColor(value, 0, cap, [247, 247, 247], [178, 24, 43]);
+      }
+
+      return interpolateColor(Number(p.yes_pct_2023), 20, 85, [247, 230, 181], [45, 127, 94]);
+    }
+
+    function styleEcuador(feature) {
+      return {
+        color: "#ffffff",
+        weight: 0.45,
+        fillColor: colorEcuador(feature),
+        fillOpacity: 0.78
+      };
+    }
+
+    function formatPct(value) {
+      const number = Number(value);
+      return Number.isNaN(number) ? "NA" : number.toFixed(1) + "%";
+    }
+
+    function bindEcuadorPopup(feature, layer) {
+      const p = feature.properties;
+      layer.bindPopup(`
+        <strong>${p.parroquia_name || "Parroquia"}</strong><br>
+        Canton: ${p.canton || "NA"}<br>
+        Province: ${p.provincia || "NA"}<br>
+        Yes vote: ${formatPct(p.yes_pct_2023)}<br>
+        Male Yes vote: ${formatPct(p.pct_si_male)}<br>
+        Female Yes vote: ${formatPct(p.pct_si_female)}<br>
+        Gender gap: ${formatPct(p.gender_gap_m_minus_f)}
+      `);
+    }
+
+    function updateEcuadorLegend() {
+      const legend = document.getElementById("ecuador-legend");
+      const note = document.getElementById("ecuador-map-note");
+
+      if (ecuadorMode === "gap") {
+        legend.innerHTML = `
+          <div class="legend-row"><span class="legend-swatch" style="background:#2166AC"></span>women more pro-Yes</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#F7F7F7"></span>small or no gap</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#B2182B"></span>men more pro-Yes</div>
+        `;
+        note.textContent = "Layer: male minus female Yes vote percentage-point gap by parroquia.";
+      } else {
+        legend.innerHTML = `
+          <div class="legend-row"><span class="legend-swatch" style="background:#F7E6B5"></span>lower Yes vote</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#2D7F5E"></span>higher Yes vote</div>
+        `;
+        note.textContent = "Layer: percentage of Yes vote in the 2023 Yasuni referendum by parroquia.";
+      }
+    }
+
+    function setEcuadorMode(mode) {
+      ecuadorMode = mode;
+      document.querySelectorAll(".ecuador-map-toggle").forEach(button => {
+        button.classList.toggle("active", button.dataset.layer === mode);
+      });
+      if (ecuadorLayer) {
+        ecuadorLayer.setStyle(styleEcuador);
+      }
+      updateEcuadorLegend();
+    }
+
+    function initEcuadorMap() {
+      ecuadorMap = L.map("ecuador-map", {
+        scrollWheelZoom: false
+      }).setView([-1.7, -78.4], 6);
+
+      window.ecuadorMap = ecuadorMap;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(ecuadorMap);
+
+      fetch("assets/maps/ecuador_referendum_parroquias.geojson")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Ecuador GeoJSON not found");
+          }
+          return response.json();
+        })
+        .then(data => {
+          ecuadorData = data;
+          ecuadorLayer = L.geoJSON(ecuadorData, {
+            style: styleEcuador,
+            onEachFeature: bindEcuadorPopup
+          }).addTo(ecuadorMap);
+          ecuadorMap.fitBounds(ecuadorLayer.getBounds(), { padding: [12, 12] });
+          updateEcuadorLegend();
+        })
+        .catch(error => {
+          document.getElementById("ecuador-map-note").textContent =
+            "The Ecuador GeoJSON file could not be loaded. Check that assets/maps/ecuador_referendum_parroquias.geojson exists in the GitHub repository.";
+          console.error(error);
+        });
+    }
+
+    document.querySelectorAll(".ecuador-map-toggle").forEach(button => {
+      button.addEventListener("click", () => setEcuadorMode(button.dataset.layer));
+    });
+
     document.addEventListener("DOMContentLoaded", initMayanMap);
+    document.addEventListener("DOMContentLoaded", initEcuadorMap);
   </script>
 </body>
 </html>
