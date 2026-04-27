@@ -842,7 +842,7 @@
         attribution: "&copy; OpenStreetMap contributors"
       }).addTo(mayanMap);
 
-      fetch("assets/maps/sections_deforestation.geojson")
+      fetch("assets/maps/sections_deforestation_light.geojson")
         .then(response => {
           if (!response.ok) {
             throw new Error("GeoJSON not found");
