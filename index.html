@@ -1,203 +1,899 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width">
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- SEO -->
-    <title>Paloma Abril Poncela | PhD Candidate | European University Institute</title>
-    <meta name="description" content="Paloma Abril Poncela is a PhD Candidate at the European University Institute (EUI), researching environmental politics and voting behavior in Latin America.">
-    <meta name="author" content="Paloma Abril Poncela">
-    <!-- TODO: replace with your real site URL -->
-    <link rel="canonical" href="https://palomaabril.github.io/">
+  <title>Paloma Abril Poncela | PhD Candidate | European University Institute</title>
+  <meta name="description" content="Paloma Abril Poncela is a PhD Candidate at the European University Institute researching environmental politics and voting behavior in Latin America.">
+  <meta name="author" content="Paloma Abril Poncela">
+  <link rel="canonical" href="https://palomaabril.github.io/">
 
-    <!-- Social previews (Open Graph / Twitter) -->
-    <meta property="og:title" content="Paloma Abril Poncela">
-    <meta property="og:description" content="PhD Candidate at the European University Institute. Research on environmental politics and voting behavior in Latin America.">
-    <meta property="og:type" content="website">
-    <!-- TODO: replace with your real site URL -->
-    <meta property="og:url" content="https://palomaabril.github.io/">
-    <!-- TODO: replace with your real image URL (profile.png must exist at site root) -->
-    <meta property="og:image" content="https://palomaabril.github.io/profile.png">
+  <meta property="og:title" content="Paloma Abril Poncela">
+  <meta property="og:description" content="Research on environmental politics, environmental damage, and voting behavior in Latin America.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://palomaabril.github.io/">
+  <meta property="og:image" content="https://palomaabril.github.io/profile.png">
+  <meta name="twitter:card" content="summary_large_image">
 
-    <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-    <style>
-      /* Layout baseline */
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        font-size: 18px;       /* bigger font */
-        line-height: 1.65;
-        color: #111;
+  <style>
+    :root {
+      --accent: #3A4F3D;
+      --accent-secondary: #A0522D;
+      --background: #FAF8F3;
+      --panel: #F2EFE6;
+      --text: #1A1A1A;
+      --muted: #68645B;
+      --line: #D4CFBE;
+      --white-panel: rgba(255,255,255,0.66);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(250,248,243,0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 0.5px solid var(--line);
+      font-family: "Montserrat", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 12px;
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      padding: 18px 28px;
+    }
+
+    .brand {
+      font-weight: 600;
+      margin-right: auto;
+    }
+
+    .nav button,
+    .nav a.nav-link {
+      border: 0;
+      background: transparent;
+      color: #777;
+      font: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      padding: 6px 0;
+    }
+
+    .nav button.active,
+    .nav button:hover,
+    .nav a.nav-link:hover {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .theme-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .theme-button {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .theme-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid var(--line);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 62px 28px 90px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 38px;
+      margin-bottom: 62px;
+    }
+
+    .label {
+      font-family: "Montserrat", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding-top: 7px;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #888;
+      line-height: 1.55;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 34px;
+      align-items: start;
+    }
+
+    .portrait {
+      width: 145px;
+      height: 145px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Montserrat", sans-serif;
+      line-height: 1.15;
+      font-weight: 500;
+      margin: 0 0 14px;
+    }
+
+    h1 {
+      font-size: 56px;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 30px;
+    }
+
+    h3 {
+      font-size: 18px;
+    }
+
+    p {
+      margin-top: 0;
+    }
+
+    .lede {
+      font-size: 21px;
+      line-height: 1.45;
+      max-width: 680px;
+      margin: 0 0 26px;
+    }
+
+    .note {
+      font-style: italic;
+      border-left: 2px solid var(--accent);
+      padding-left: 16px;
+      color: #56524A;
+      max-width: 680px;
+    }
+
+    .links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .button-link {
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      padding: 8px 13px;
+      color: var(--accent);
+      background: transparent;
+    }
+
+    .button-link:hover {
+      background: var(--accent);
+      color: var(--background);
+      text-decoration: none;
+    }
+
+    .card {
+      display: block;
+      background: var(--white-panel);
+      border-radius: 16px;
+      border-left: 3px solid var(--accent);
+      padding: 18px 22px;
+      margin-bottom: 16px;
+      color: inherit;
+    }
+
+    .card:hover {
+      text-decoration: none;
+      background: rgba(255,255,255,0.88);
+    }
+
+    .smallcaps {
+      font-family: "Montserrat", sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .project {
+      border-top: 0.5px solid var(--line);
+      padding-top: 42px;
+    }
+
+    .pub {
+      border-top: 0.5px solid var(--line);
+      padding: 18px 0;
+    }
+
+    .footer {
+      border-top: 0.5px solid var(--line);
+      padding-top: 26px;
+    }
+
+    .mayan-interactive-layout {
+      display: grid;
+      grid-template-columns: 1.18fr 0.92fr;
+      gap: 24px;
+      align-items: start;
+      margin: 30px 0;
+    }
+
+    .map-card,
+    .image-card {
+      background: var(--white-panel);
+      border-radius: 16px;
+      padding: 18px;
+      border: 0.5px solid var(--line);
+    }
+
+    #mayan-map {
+      height: 560px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 0.5px solid var(--line);
+      background: var(--panel);
+    }
+
+    .section-stats {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #555;
+      line-height: 1.65;
+      margin: 12px 0 18px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .image-grid figure {
+      margin: 0;
+    }
+
+    .image-grid img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+      border: 0.5px solid var(--line);
+      background: var(--panel);
+    }
+
+    .image-grid figcaption {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .legend {
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0;
+    }
+
+    .legend-swatch {
+      width: 18px;
+      height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .map-note {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+      .mayan-interactive-layout {
+        grid-template-columns: 1fr;
       }
 
-      .wrapper {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 20px;
+      #mayan-map {
+        height: 440px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .nav {
+        flex-wrap: wrap;
       }
 
-      header {
-        width: 220px;
-        float: left;
-        margin-right: 40px;
+      .theme-controls {
+        width: 100%;
       }
 
-      section {
-        overflow: hidden;
+      .row,
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 18px;
       }
 
-      /* Titles in dark blue */
-      h1, h2, h3 {
-        color: #0b2e5e;
-        line-height: 1.2;
-        margin-bottom: 0.5rem;
+      h1 {
+        font-size: 42px;
       }
 
-      header h1 {
-        margin-top: 10px;
-        font-size: 28px;
+      .portrait {
+        width: 118px;
+        height: 118px;
       }
 
-      section h1 { font-size: 30px; margin-top: 0; }
-      section h2 { font-size: 22px; margin-top: 28px; }
-      section h3 { font-size: 19px; margin-top: 20px; }
-
-      p, li { font-size: 18px; }
-
-      a { color: #0b2e5e; }
-      a:hover { text-decoration: underline; }
-
-      /* Mobile */
-      @media (max-width: 768px) {
-        header {
-          float: none;
-          width: 100%;
-          margin-right: 0;
-          text-align: center;
-        }
-
-        section {
-          float: none;
-          width: 100%;
-        }
+      main {
+        padding-top: 36px;
       }
-    </style>
-  </head>
 
-  <body>
-    <div class="wrapper">
-      <header>
-        <img src="profile.png" alt="Paloma Abril" style="max-width: 150px; border-radius: 100px; margin-bottom: 10px;">
-        <h1>Paloma Abril Poncela</h1>
-        <p>PhD Candidate · European University Institute</p>
+      .label {
+        padding-top: 0;
+      }
 
-        <h3>Contact</h3>
-        <p>Email: <a href="mailto:paloma.abrilponcela@eui.eu">paloma.abrilponcela@eui.eu</a></p>
-        <p><a href="cv.pdf" target="_blank" rel="noopener">Download my CV</a></p>
-        <p><a href="https://scholar.google.com/citations?user=mrmPyyAAAAAJ&hl=es" target="_blank" rel="noopener">Google Scholar</a></p>
-      </header>
+      .links {
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
 
-      <section>
-        <h1>About Me</h1>
-        <p>
-          I am a PhD candidate at the European University Institute in Florence (Italy), supervised by Professor Miriam Golden and Professor Elias Dinas.
-          My research focuses on the effects of environmental damage and climate change on voting behavior in Latin America, particularly the trade-off between
-          environmental concerns and economic interests for both voters and elites.
-        </p>
+<body>
+  <div class="topbar">
+    <nav class="nav">
+      <span class="brand">Paloma Abril Poncela</span>
+      <button class="navbtn active" data-page="home">Home</button>
+      <button class="navbtn" data-page="research">Research</button>
+      <button class="navbtn" data-page="teaching">Teaching</button>
+      <a class="nav-link" href="cv.pdf" target="_blank" rel="noopener">CV</a>
 
-        <p>
-          In addition to my research, I teach Basic Statistics and Mathematics, and practical classes on Game Theory at the School of Transnational Governance in Florence,
-          and Applied Causal Inference at the University of Lucerne.
-        </p>
+      <div class="theme-controls">
+        <button class="theme-button" data-color="#3A4F3D" aria-label="Green theme">
+          <span class="theme-dot" style="background:#3A4F3D"></span>
+        </button>
+        <button class="theme-button" data-color="#A0522D" aria-label="Terracotta theme">
+          <span class="theme-dot" style="background:#A0522D"></span>
+        </button>
+        <button class="theme-button" data-color="#0B2E5E" aria-label="Blue theme">
+          <span class="theme-dot" style="background:#0B2E5E"></span>
+        </button>
+      </div>
+    </nav>
+  </div>
 
-        <p>
-          Lastly, I collaborate with the NGOs Alianza por la Solidaridad and ActionAid on projects focused on climate justice. My work with them includes contributing to
-          policy analysis, leading educational sessions on climate justice for high school and undergraduate students, and participating in public events and forums—such as
-          sessions at the European Commission and the UN climate conferences—to help bring academic insights into broader discussions.
-        </p>
+  <main>
+    <section id="home" class="page active">
+      <div class="hero row">
+        <div>
+          <img class="portrait" src="profile.png" alt="Paloma Abril Poncela">
+          <p class="eyebrow">
+            PhD Candidate<br>
+            European University Institute<br>
+            Florence
+          </p>
+        </div>
 
-        <h2>Peer-Reviewed Articles</h2>
-        <p>
-          Fernández, J. J., Orriols, L., &amp; Abril, P. (2025). Economic vulnerability and emotions toward climate change: A case study of Spain.
-          <em>Journal of Environmental Psychology</em>, <em>102537</em>.
-          <a href="https://www.sciencedirect.com/science/article/pii/S0272494425000209" target="_blank" rel="noopener">
-            https://www.sciencedirect.com/science/article/pii/S0272494425000209
+        <div>
+          <h1>Paloma Abril<br>Poncela</h1>
+          <p class="lede">
+            I study how environmental damage, climate change, and natural resource extraction shape voting behavior, protest, and political mobilization in Latin America.
+          </p>
+          <p class="note">
+            My research focuses especially on the trade-off between environmental concerns and economic interests for voters and elites.
+          </p>
+
+          <div class="links" style="margin-top:24px">
+            <a class="button-link" href="cv.pdf" target="_blank" rel="noopener">Download CV</a>
+            <a class="button-link" href="https://scholar.google.com/citations?user=mrmPyyAAAAAJ&hl=es" target="_blank" rel="noopener">Google Scholar</a>
+            <a href="mailto:paloma.abrilponcela@eui.eu">paloma.abrilponcela@eui.eu</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="label">About</div>
+        <div>
+          <p>
+            I am a PhD candidate at the European University Institute in Florence, supervised by Professor Miriam Golden and Professor Elias Dinas. My research focuses on the effects of environmental damage and climate change on voting behavior in Latin America, particularly the trade-off between environmental concerns and economic interests for both voters and elites.
+          </p>
+          <p>
+            In addition to my research, I teach Basic Statistics and Mathematics, and practical classes on Game Theory at the School of Transnational Governance in Florence, and Applied Causal Inference at the University of Lucerne.
+          </p>
+          <p>
+            I also collaborate with the NGOs Alianza por la Solidaridad and ActionAid on projects focused on climate justice. My work with them includes contributing to policy analysis, leading educational sessions on climate justice for high school and undergraduate students, and participating in public events and forums, such as sessions at the European Commission and UN climate conferences.
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="label">Highlights</div>
+        <div>
+          <a class="card" href="#" onclick="showPage('research'); return false;">
+            <div class="smallcaps">Featured project</div>
+            <h3>From Economic Voting to Environmental Backlash</h3>
+            <p>How voters respond when a government delivers economic growth at environmental cost, using Mexico’s Mayan Train as a case.</p>
           </a>
-        </p>
 
-        <h2>Working Papers</h2>
+          <a class="card" href="#" onclick="showPage('research'); return false;">
+            <div class="smallcaps">Interactive map</div>
+            <h3>Electoral sections and deforestation along the Mayan Train</h3>
+            <p>Click sections to see measured deforestation and satellite-image comparisons.</p>
+          </a>
+        </div>
+      </div>
 
-        <h3>From Economic Voting to Environmental Backlash: The Mayan Train and Electoral Dynamics in Mexico</h3>
-        <p><strong>Author:</strong> Paloma Abril Poncela</p>
-        <p>
-          How do voters evaluate governments that deliver economic growth at environmental cost? Classic models of retrospective voting expect citizens to reward prosperity,
-          yet development often comes at the expense of the environment, generating backlash. I argue that accountability under these trade-offs hinges on whether citizens
-          directly capture the gains from growth. When benefits are diffuse and environmental losses are visible and concentrated, voters punish governments; when benefits are
-          direct and compensatory, they reward them even amid ecological damage. I test this argument using Mexico’s Mayan Train, a macro-project that spurred regional expansion
-          alongside severe deforestation. Combining satellite, firm, and electoral data in a difference-in-differences framework, I show that voters rewarded growth without
-          deforestation, punished growth with ecological destruction, and rewarded the government where expropriation payments provided direct compensation. This helps clarify why
-          in the literature, environmental damage is politically prioritized in some contexts but outweighed by development in others: it depends on the distributive characteristics of growth.
-        </p>
-        <p><strong>Presented at:</strong> EPSA 2025, POBI 2025</p>
-        <p><strong>Under Review</p>
+      <div class="row footer">
+        <div class="label">Contact</div>
+        <div class="links">
+          <a href="mailto:paloma.abrilponcela@eui.eu">Email</a>
+          <span>·</span>
+          <a href="cv.pdf" target="_blank" rel="noopener">CV</a>
+          <span>·</span>
+          <a href="https://scholar.google.com/citations?user=mrmPyyAAAAAJ&hl=es" target="_blank" rel="noopener">Google Scholar</a>
+          <span>·</span>
+          <a href="https://github.com/palomaabril" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </section>
 
-        <h3>When Oil Meets the Environment: How Gender Shapes Environmental Voting in Ecuador</h3>
-        <p><strong>Authors:</strong> Paloma Abril Poncela, Sara Dybesland and Deniz Tufur</p>
-        <p>
-          This paper examines when and why men and women vote differently on environmental matters, seeking to identify the determinants of the environmental gender gap. While
-          research has documented gender differences in environmental attitudes, less is known about how these translate into actual voting behavior, particularly in contexts shaped by
-          resource dependence. We address this gap through the case of Ecuador’s 2023 national referendum, which asked voters whether to halt oil extraction in Yasuní National Park,
-          a highly productive yet protected area of the Amazon. Using official electoral data, where voting booths are segregated by gender, and applying linear regression models and
-          two-way fixed effects estimations, I find that in areas without oil extraction, women were significantly more likely than men to support halting extraction. However, this gender
-          gap disappears in extractive regions, where both men and women show higher support for continued extraction. Further analysis confirms that the stronger the local presence of oil
-          industries, the greater the overall opposition to halting extraction, but that this opposition does not differ by gender. To deepen these findings, we propose a follow-up survey in
-          Ecuador that will explore why the gender gap exists in non-oil regions but not in oil-producing ones. The survey will test two sets of hypotheses: one centered on material incentives
-          and another on environmental motivations, to better understand how local and individual economic contexts shape gendered environmental preferences.
-        </p>
+    <section id="research" class="page">
+      <div class="row">
+        <div class="label">Research</div>
+        <div>
+          <h1>Research</h1>
+          <p class="lede">
+            My projects study environmental voting, extraction, deforestation, indigenous mobilization, and climate politics.
+          </p>
+        </div>
+      </div>
 
-        <h3>Election and Deforestation: A Systematic Literature Review of Empirical and Theoretical Evidence</h3>
-        <p><strong>Authors:</strong> Paloma Abril Poncela and Rens Chazottes</p>
-        <p>
-          This systematic literature review explores how and why elections influence deforestation dynamics, synthesizing theoretical arguments and empirical findings from political ecology
-          and environmental governance research. While democratic elections are often presumed to foster environmental accountability, the link between electoral processes and forest outcomes
-          remains theoretically contested and empirically underexplored. Drawing on a range of interdisciplinary studies, we identify four dominant explanations connecting elections to reduced
-          deforestation: electoral accountability, economic development, strengthened property rights, and local devolution. We highlight how these mechanisms operate differently across political
-          regimes, governance levels, and institutional contexts. The review critically examines the limitations of the dominant "blueprint" approach to democratic institutions, which overlooks the
-          importance of contextual norms and informal institutions. By clarifying conceptual assumptions, mapping key debates, and assessing empirical evidence, this review aims to advance a more
-          grounded and nuanced understanding of how electoral politics shape forest conservation outcomes.
-        </p>
+      <div class="row project">
+        <div>
+          <div class="smallcaps">Project 01</div>
+          <p class="eyebrow">
+            Mexico<br>
+            2024–26<br>
+            Under review
+          </p>
+        </div>
 
-        <h3>Environmental Mobilization of the Indigenous in Latin America</h3>
-        <p><strong>Author:</strong> Paloma Abril Poncela</p>
-        <p>
-          Indigenous populations in Latin America exhibit significantly higher levels of environmental concern compared to their non-indigenous counterparts, often resulting in a greater propensity
-          for environmental protests. However, existing research on political mobilization and climate activism has yet to fully explore why indigenous communities are more likely to engage in environmental
-          activism. This study addresses this gap by investigating whether material interests or cultural values are more influential in driving environmental activism among indigenous communities in Latin America.
-          Previous research has typically focused on either material interests or identity values separately, without adequately exploring their relative importance. This research bridges this gap by examining both
-          factors concurrently, in a context where both might play an important role as mobilization drivers. Utilizing a mixed-methods approach, the study includes fieldwork in the urban and rural areas of Quintana Roo,
-          Mexico, leveraging semi-structured interviews and survey experiments. The findings of this study contribute to a deeper understanding of environmental activism by identifying the primary drivers of mobilization.
-          Ultimately, the research underscores the critical need for inclusive environmental policies that recognize and address the concerns of indigenous populations.
-        </p>
+        <div>
+          <h2>From Economic Voting to Environmental Backlash: The Mayan Train and Electoral Dynamics in Mexico</h2>
+          <p><strong>Author:</strong> Paloma Abril Poncela</p>
+          <p>
+            How do voters evaluate governments that deliver economic growth at environmental cost? Classic models of retrospective voting expect citizens to reward prosperity, yet development often comes at the expense of the environment, generating backlash. I argue that accountability under these trade-offs hinges on whether citizens directly capture the gains from growth.
+          </p>
+          <p>
+            When benefits are diffuse and environmental losses are visible and concentrated, voters punish governments; when benefits are direct and compensatory, they reward them even amid ecological damage. I test this argument using Mexico’s Mayan Train, a macro-project that spurred regional expansion alongside severe deforestation. Combining satellite, firm, and electoral data in a difference-in-differences framework, I show that voters rewarded growth without deforestation, punished growth with ecological destruction, and rewarded the government where expropriation payments provided direct compensation.
+          </p>
+          <p class="eyebrow">Presented at: EPSA 2025, POBI 2025</p>
 
-        <h3>Green Voting without a Green Party</h3>
-        <p><strong>Authors:</strong> Lluis Orriols and Paloma Abril</p>
-        <p><strong>Presented at:</strong> APSA 2024</p>
-        <p>
-          This study explores green voting in Spain across municipal, regional, and national levels. While surveys often reveal high levels of climate concern among individuals, there remains a gap in understanding how
-          this sentiment translates into voting behavior, and the conditions under which it manifests. Our research aims to find out how individuals weigh a candidate's environmental stance against other issues like public
-          services, decentralization, and immigration. Additionally, we aim to discern whether voters exhibit a preference for candidates proposing environmentally conscious policies, even when associated with potential economic
-          costs. Employing a conjoint experiment methodology with panel data across three waves coinciding with municipal, regional, and national elections in Spain, we can identify the respondents’ preferences across a range of
-          candidate attributes. Notably, our findings reveal that voters prefer candidates that express environmental consciousness without advocating economically burdensome measures. The results are identical at the different levels
-          of governance, shedding light on the nuanced dynamics of green voting in Spain.
-        </p>
-      </section>
-    </div>
-  </body>
+          <div class="mayan-interactive-layout">
+            <div class="map-card">
+              <h3>Electoral sections along the Mayan Train</h3>
+              <p>
+                Click an electoral section to display its measured deforestation and the satellite comparison.
+              </p>
+
+              <div id="mayan-map"></div>
+
+              <div class="legend">
+                <div class="legend-row">
+                  <span class="legend-swatch" style="background:#F1E3B5"></span>
+                  lower measured deforestation
+                </div>
+                <div class="legend-row">
+                  <span class="legend-swatch" style="background:#D99B5F"></span>
+                  medium measured deforestation
+                </div>
+                <div class="legend-row">
+                  <span class="legend-swatch" style="background:#A0522D"></span>
+                  higher measured deforestation
+                </div>
+              </div>
+
+              <p class="map-note">
+                Source: electoral-section shapefiles and satellite-based deforestation calculations.
+              </p>
+            </div>
+
+            <div class="image-card">
+              <h3 id="selected-section-title">Select a section</h3>
+
+              <div id="selected-section-info" class="section-stats">
+                Click an electoral section on the map to display the deforestation estimate.
+              </div>
+
+              <div class="image-grid">
+                <figure>
+                  <img src="assets/images/qgis2018.png" alt="Satellite image before deforestation, 2018">
+                  <figcaption>Before · 2018</figcaption>
+                </figure>
+
+                <figure>
+                  <img src="assets/images/qgis2024.png" alt="Satellite image after deforestation, 2024">
+                  <figcaption>After · 2024</figcaption>
+                </figure>
+
+                <figure>
+                  <img src="assets/images/qgis_2024_area.png" alt="Measured deforestation area">
+                  <figcaption>Measured deforestation area</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row project">
+        <div>
+          <div class="smallcaps">Project 02</div>
+          <p class="eyebrow">
+            Ecuador<br>
+            2023 referendum<br>
+            with Sara Dybesland & Deniz Tufur
+          </p>
+        </div>
+
+        <div>
+          <h2>When Oil Meets the Environment: How Gender Shapes Environmental Voting in Ecuador</h2>
+          <p><strong>Authors:</strong> Paloma Abril Poncela, Sara Dybesland and Deniz Tufur</p>
+          <p>
+            This paper examines when and why men and women vote differently on environmental matters, seeking to identify the determinants of the environmental gender gap. We study Ecuador’s 2023 national referendum, which asked voters whether to halt oil extraction in Yasuní National Park, using official electoral data from gender-segregated voting booths.
+          </p>
+          <p>
+            In areas without oil extraction, women were significantly more likely than men to support halting extraction. However, this gender gap disappears in extractive regions, where both men and women show higher support for continued extraction. A follow-up survey explores whether material incentives or environmental motivations explain these patterns.
+          </p>
+        </div>
+      </div>
+
+      <div class="row project">
+        <div class="label">Articles</div>
+        <div>
+          <div class="pub">
+            <h3>Economic vulnerability and emotions toward climate change: A case study of Spain</h3>
+            <p>
+              Fernández, J. J., Orriols, L., &amp; Abril, P. (2025). <em>Journal of Environmental Psychology</em>, 102537.
+            </p>
+            <a href="https://www.sciencedirect.com/science/article/pii/S0272494425000209" target="_blank" rel="noopener">Read article</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row project">
+        <div class="label">Other work</div>
+        <div>
+          <div class="pub">
+            <h3>Election and Deforestation: A Systematic Literature Review of Empirical and Theoretical Evidence</h3>
+            <p>
+              With Rens Chazottes. This systematic literature review explores how and why elections influence deforestation dynamics, synthesizing theoretical arguments and empirical findings from political ecology and environmental governance research.
+            </p>
+          </div>
+
+          <div class="pub">
+            <h3>Environmental Mobilization of the Indigenous in Latin America</h3>
+            <p>
+              This project studies whether material interests or cultural values drive indigenous environmental activism in Latin America, using fieldwork in Quintana Roo, semi-structured interviews, and survey experiments.
+            </p>
+          </div>
+
+          <div class="pub">
+            <h3>Green Voting without a Green Party</h3>
+            <p>
+              With Lluis Orriols. Presented at APSA 2024. A conjoint experiment on how voters weigh environmental positions against other political issues in Spain.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="teaching" class="page">
+      <div class="row">
+        <div class="label">Teaching</div>
+        <div>
+          <h1>Teaching</h1>
+
+          <div class="pub">
+            <h3>European University Institute / School of Transnational Governance</h3>
+            <p>Basic Statistics and Mathematics; practical classes on Game Theory.</p>
+          </div>
+
+          <div class="pub">
+            <h3>University of Lucerne</h3>
+            <p>Applied Causal Inference.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    function showPage(id) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+
+      document.getElementById(id).classList.add("active");
+
+      document.querySelectorAll(".navbtn").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === id);
+      });
+
+      if (id === "research" && window.mayanMap) {
+        setTimeout(() => {
+          window.mayanMap.invalidateSize();
+        }, 150);
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.querySelectorAll(".navbtn").forEach(button => {
+      button.addEventListener("click", () => showPage(button.dataset.page));
+    });
+
+    document.querySelectorAll(".theme-button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.documentElement.style.setProperty("--accent", button.dataset.color);
+      });
+    });
+
+    let mayanMap;
+    let geojsonLayer;
+    let selectedLayer;
+
+    function getDeforestationValue(properties) {
+      const possibleNames = [
+        "deforestation_m2",
+        "def_seccion_m",
+        "deforestation",
+        "deforestation_area",
+        "area_deforested",
+        "area_m2",
+        "deforestation_ha",
+        "ha_deforested",
+        "loss_m2",
+        "loss_ha"
+      ];
+
+      for (const name of possibleNames) {
+        if (
+          properties[name] !== undefined &&
+          properties[name] !== null &&
+          properties[name] !== ""
+        ) {
+          return {
+            name: name,
+            value: Number(properties[name])
+          };
+        }
+      }
+
+      return {
+        name: null,
+        value: null
+      };
+    }
+
+    function getSectionId(properties) {
+      return (
+        properties.section_id ||
+        properties.entidad_municipio_seccion ||
+        properties.join_id ||
+        properties.SECCION ||
+        properties.seccion ||
+        "unknown"
+      );
+    }
+
+    function colorByDeforestation(value) {
+      if (value === null || Number.isNaN(value)) return "#E8E2D0";
+      if (value > 100000) return "#A0522D";
+      if (value > 50000) return "#D99B5F";
+      if (value > 10000) return "#E7C783";
+      return "#F1E3B5";
+    }
+
+    function styleSection(feature) {
+      const d = getDeforestationValue(feature.properties);
+
+      return {
+        color: "#3A4F3D",
+        weight: 0.45,
+        fillColor: colorByDeforestation(d.value),
+        fillOpacity: 0.68
+      };
+    }
+
+    function updatePanel(properties) {
+      const sectionId = getSectionId(properties);
+      const d = getDeforestationValue(properties);
+
+      document.getElementById("selected-section-title").textContent =
+        "Section " + sectionId;
+
+      const state =
+        properties.state ||
+        properties.estado ||
+        properties.ENTIDAD ||
+        properties.entidad ||
+        "NA";
+
+      const municipality =
+        properties.municipio ||
+        properties.MUNICIPIO ||
+        properties.nombre_mun ||
+        properties.NOMBRE_MUN ||
+        "NA";
+
+      const formattedDeforestation =
+        d.value === null || Number.isNaN(d.value)
+          ? "NA"
+          : d.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+      const unit =
+        d.name && d.name.toLowerCase().includes("ha")
+          ? "hectares"
+          : "m²";
+
+      document.getElementById("selected-section-info").innerHTML = `
+        <strong>State:</strong> ${state}<br>
+        <strong>Municipality:</strong> ${municipality}<br>
+        <strong>Deforestation:</strong> ${formattedDeforestation} ${unit}<br>
+        <strong>Variable:</strong> ${d.name || "not detected"}
+      `;
+    }
+
+    function initMayanMap() {
+      mayanMap = L.map("mayan-map", {
+        scrollWheelZoom: false
+      }).setView([19.2, -89.3], 7);
+
+      window.mayanMap = mayanMap;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(mayanMap);
+
+      fetch("assets/maps/sections_deforestation.geojson")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("GeoJSON not found");
+          }
+          return response.json();
+        })
+        .then(data => {
+          geojsonLayer = L.geoJSON(data, {
+            style: styleSection,
+            onEachFeature: function(feature, layer) {
+              layer.on({
+                click: function(e) {
+                  if (selectedLayer) {
+                    geojsonLayer.resetStyle(selectedLayer);
+                  }
+
+                  selectedLayer = e.target;
+
+                  e.target.setStyle({
+                    color: "#111",
+                    weight: 2,
+                    fillOpacity: 0.9
+                  });
+
+                  updatePanel(feature.properties);
+                },
+                mouseover: function(e) {
+                  e.target.setStyle({
+                    weight: 1.5,
+                    color: "#111"
+                  });
+                },
+                mouseout: function(e) {
+                  if (selectedLayer !== e.target) {
+                    geojsonLayer.resetStyle(e.target);
+                  }
+                }
+              });
+            }
+          }).addTo(mayanMap);
+
+          mayanMap.fitBounds(geojsonLayer.getBounds());
+        })
+        .catch(error => {
+          document.getElementById("selected-section-info").innerHTML =
+            "The GeoJSON file could not be loaded. Check that <br><strong>assets/maps/sections_deforestation.geojson</strong><br> exists in the GitHub repository.";
+          console.error(error);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", initMayanMap);
+  </script>
+</body>
 </html>
