@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Paloma Abril Poncela | PhD Candidate | European University Institute</title>
-  <meta name="description" content="Paloma Abril Poncela is a PhD Candidate at the European University Institute researching environmental politics and voting behavior.">
+  <meta name="description" content="Paloma Abril Poncela is a PhD Candidate at the European University Institute researching environmental politics and voting behavior in Latin America.">
   <meta name="author" content="Paloma Abril Poncela">
   <link rel="canonical" href="https://palomaabril.github.io/">
 
@@ -83,6 +83,7 @@
     .brand {
       font-weight: 600;
       margin-right: auto;
+      color: var(--text);
     }
 
     .nav button,
@@ -138,6 +139,22 @@
       display: block;
     }
 
+    .image-header {
+      width: 100%;
+      margin: -28px 0 56px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 0.5px solid var(--line);
+      background: var(--panel);
+    }
+
+    .image-header img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      display: block;
+    }
+
     .row {
       display: grid;
       grid-template-columns: 150px 1fr;
@@ -159,22 +176,6 @@
       font-size: 11px;
       color: #888;
       line-height: 1.55;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 34px;
-      align-items: start;
-    }
-
-    .portrait {
-      width: 145px;
-      height: 145px;
-      border-radius: 999px;
-      object-fit: cover;
-      border: 1px solid var(--line);
-      background: var(--panel);
     }
 
     h1,
@@ -216,6 +217,23 @@
       padding-left: 16px;
       color: #56524A;
       max-width: 680px;
+    }
+
+    .about-with-photo {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px;
+      gap: 34px;
+      align-items: start;
+      max-width: 860px;
+    }
+
+    .about-photo {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 0.5px solid var(--line);
+      background: var(--panel);
     }
 
     .links {
@@ -392,8 +410,7 @@
         width: 100%;
       }
 
-      .row,
-      .hero {
+      .row {
         grid-template-columns: 1fr;
         gap: 18px;
       }
@@ -402,13 +419,26 @@
         font-size: 42px;
       }
 
-      .portrait {
-        width: 118px;
-        height: 118px;
-      }
-
       main {
         padding-top: 36px;
+      }
+
+      .image-header {
+        margin-top: -12px;
+        margin-bottom: 36px;
+      }
+
+      .image-header img {
+        height: 150px;
+      }
+
+      .about-with-photo {
+        grid-template-columns: 1fr;
+      }
+
+      .about-photo {
+        width: 145px;
+        height: 145px;
       }
 
       .label {
@@ -446,10 +476,13 @@
   </div>
 
   <main>
+    <div class="image-header">
+      <img src="assets/images/PALOMAABRIL.png" alt="Satellite imagery collage header">
+    </div>
+
     <section id="home" class="page active">
-      <div class="hero row">
+      <div class="row">
         <div>
-          <img class="portrait" src="profile.png" alt="Paloma Abril Poncela">
           <p class="eyebrow">
             PhD Candidate<br>
             European University Institute<br>
@@ -476,16 +509,23 @@
 
       <div class="row">
         <div class="label">About</div>
-        <div>
-          <p>
-            I am a PhD candidate at the European University Institute in Florence, supervised by Professor Miriam Golden and Professor Elias Dinas. My research focuses on the effects of environmental damage and climate change on voting behavior in Latin America, particularly the trade-off between environmental concerns and economic interests for both voters and elites.
-          </p>
-          <p>
-            In addition to my research, I teach Basic Statistics and Mathematics, and practical classes on Game Theory at the School of Transnational Governance in Florence, and Applied Causal Inference at the University of Lucerne.
-          </p>
-          <p>
-            I also collaborate with the NGOs Alianza por la Solidaridad and ActionAid on projects focused on climate justice. My work with them includes contributing to policy analysis, leading educational sessions on climate justice for high school and undergraduate students, and participating in public events and forums, such as sessions at the European Commission and UN climate conferences.
-          </p>
+
+        <div class="about-with-photo">
+          <div>
+            <p>
+              I am a third-year PhD candidate at the European University Institute in Florence, supervised by Professor Miriam Golden and Professor Elias Dinas. My research focuses on the effects of environmental damage and climate change on voting behavior in Latin America, particularly the trade-off between environmental concerns and economic interests for both voters and elites.
+            </p>
+
+            <p>
+              In addition to my research, I teach Basic Statistics and Mathematics, and practical classes on Game Theory at the School of Transnational Governance in Florence, and Applied Causal Inference at the University of Lucerne.
+            </p>
+
+            <p>
+              I also collaborate with the NGOs Alianza por la Solidaridad and ActionAid on projects focused on climate justice. My work with them includes contributing to policy analysis, leading educational sessions on climate justice for high school and undergraduate students, and participating in public events and forums, such as sessions at the European Commission and UN climate conferences.
+            </p>
+          </div>
+
+          <img class="about-photo" src="profile.png" alt="Paloma Abril Poncela">
         </div>
       </div>
 
@@ -544,12 +584,15 @@
         <div>
           <h2>From Economic Voting to Environmental Backlash: The Mayan Train and Electoral Dynamics in Mexico</h2>
           <p><strong>Author:</strong> Paloma Abril Poncela</p>
+
           <p>
             How do voters evaluate governments that deliver economic growth at environmental cost? Classic models of retrospective voting expect citizens to reward prosperity, yet development often comes at the expense of the environment, generating backlash. I argue that accountability under these trade-offs hinges on whether citizens directly capture the gains from growth.
           </p>
+
           <p>
             When benefits are diffuse and environmental losses are visible and concentrated, voters punish governments; when benefits are direct and compensatory, they reward them even amid ecological damage. I test this argument using Mexico’s Mayan Train, a macro-project that spurred regional expansion alongside severe deforestation. Combining satellite, firm, and electoral data in a difference-in-differences framework, I show that voters rewarded growth without deforestation, punished growth with ecological destruction, and rewarded the government where expropriation payments provided direct compensation.
           </p>
+
           <p class="eyebrow">Presented at: EPSA 2025, POBI 2025</p>
 
           <div class="mayan-interactive-layout">
@@ -622,9 +665,11 @@
         <div>
           <h2>When Oil Meets the Environment: How Gender Shapes Environmental Voting in Ecuador</h2>
           <p><strong>Authors:</strong> Paloma Abril Poncela, Sara Dybesland and Deniz Tufur</p>
+
           <p>
             This paper examines when and why men and women vote differently on environmental matters, seeking to identify the determinants of the environmental gender gap. We study Ecuador’s 2023 national referendum, which asked voters whether to halt oil extraction in Yasuní National Park, using official electoral data from gender-segregated voting booths.
           </p>
+
           <p>
             In areas without oil extraction, women were significantly more likely than men to support halting extraction. However, this gender gap disappears in extractive regions, where both men and women show higher support for continued extraction. A follow-up survey explores whether material incentives or environmental motivations explain these patterns.
           </p>
@@ -633,6 +678,7 @@
 
       <div class="row project">
         <div class="label">Articles</div>
+
         <div>
           <div class="pub">
             <h3>Economic vulnerability and emotions toward climate change: A case study of Spain</h3>
@@ -646,6 +692,7 @@
 
       <div class="row project">
         <div class="label">Other work</div>
+
         <div>
           <div class="pub">
             <h3>Election and Deforestation: A Systematic Literature Review of Empirical and Theoretical Evidence</h3>
@@ -674,6 +721,7 @@
     <section id="teaching" class="page">
       <div class="row">
         <div class="label">Teaching</div>
+
         <div>
           <h1>Teaching</h1>
 
@@ -888,7 +936,7 @@
         })
         .catch(error => {
           document.getElementById("selected-section-info").innerHTML =
-            "The GeoJSON file could not be loaded. Check that <br><strong>assets/maps/sections_deforestation.geojson</strong><br> exists in the GitHub repository.";
+            "The GeoJSON file could not be loaded. Check that <br><strong>assets/maps/sections_deforestation_light.geojson</strong><br> exists in the GitHub repository.";
           console.error(error);
         });
     }
