@@ -625,6 +625,10 @@
       margin-bottom: 14px;
     }
 
+    .ecuador-results-card .results-button {
+      margin-top: 16px;
+    }
+
     .gap-figure {
       width: 100%;
       border-radius: 12px;
@@ -1043,6 +1047,11 @@
                 <text x="438" y="242" font-size="18">ns</text>
                 <text class="subtitle" x="92" y="396" font-size="12">Non-oil: -1.93 p.p. [95% CI: -2.31, -1.56]. Oil: -0.48 p.p. [95% CI: -1.36, 0.40].</text>
               </svg>
+
+              <button class="results-button" type="button" data-results-image="assets/images/yasuni_dist_pooled_nogalapagos.png" data-results-title="Distance to Yasuni and Yes vote" data-results-alt="Scatter plot showing distance to Yasuni and percentage of Yes vote in 2023">
+                <img src="assets/images/yasuni_dist_pooled_nogalapagos.png" alt="">
+                <span>Distance to Yasuni and Yes vote</span>
+              </button>
             </div>
           </div>
         </div>
@@ -1480,7 +1489,7 @@
             features: mainlandFeatures
           }).getBounds();
 
-          ecuadorMap.fitBounds(mainlandBounds, { padding: [12, 12] });
+          ecuadorMap.fitBounds(mainlandBounds.pad(0.18), { padding: [12, 12] });
           updateEcuadorLegend();
         })
         .catch(error => {
