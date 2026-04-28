@@ -303,6 +303,27 @@
       padding: 18px 0;
     }
 
+    .research-index {
+      display: grid;
+      gap: 10px;
+      max-width: 760px;
+      margin-top: 20px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .research-index a {
+      border-left: 2px solid var(--accent);
+      color: var(--text);
+      padding: 8px 0 8px 12px;
+    }
+
+    .research-index a:hover {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
     .footer {
       border-top: 0.5px solid var(--line);
       padding-top: 26px;
@@ -764,7 +785,7 @@
         <div>
           <h1>Paloma Abril<br>Poncela</h1>
           <p class="lede">
-            I study how environmental damage, climate change, and natural resource extraction shape voting behavior, protest, and political mobilization.
+            I study how environmental damage, climate change, and natural resource extraction shape voting behavior, protest, and political mobilization in Latin America.
           </p>
           <p class="note">
             My research focuses especially on the trade-off between environmental concerns and economic interests for voters and elites.
@@ -820,12 +841,22 @@
         <div>
           <h1>Research</h1>
           <p class="lede">
-            My projects study environmental voting, extraction, deforestation, and climate politics.
+            My projects study environmental voting, extraction, deforestation, indigenous mobilization, and climate politics.
           </p>
+
+          <div class="smallcaps">Papers</div>
+          <div class="research-index" aria-label="Paper title links">
+            <a href="#published-papers">Economic vulnerability and emotions toward climate change: A case study of Spain</a>
+            <a href="#mayan-train-project">From Economic Voting to Environmental Backlash: The Mayan Train and Electoral Dynamics in Mexico</a>
+            <a href="#ecuador-project">When Oil Meets the Environment: How Gender Shapes Environmental Voting in Ecuador</a>
+            <a href="#elections-deforestation-project">Theory Building Through Scope Conditions Decision Tree: An Application on Elections and Deforestation</a>
+            <a href="#indigenous-mobilization-project">Environmental Mobilization of the Indigenous in Latin America</a>
+            <a href="#green-voting-project">Green Voting without a Green Party</a>
+          </div>
         </div>
       </div>
 
-      <div class="row project">
+      <div class="row project" id="published-papers">
         <div class="label">Published Papers</div>
 
         <div>
@@ -839,7 +870,7 @@
         </div>
       </div>
 
-      <div class="row project">
+      <div class="row project" id="mayan-train-project">
         <div>
           <div class="smallcaps">Project 01</div>
           <p class="eyebrow">
@@ -961,7 +992,7 @@
         </div>
       </div>
 
-      <div class="row project">
+      <div class="row project" id="ecuador-project">
         <div>
           <div class="smallcaps">Project 02</div>
           <p class="eyebrow">
@@ -976,10 +1007,11 @@
           <p><strong>Authors:</strong> Paloma Abril Poncela, Sara Dybesland and Deniz Tufur</p>
 
           <p>
-            This paper analyzes how local economic structures condition gender differences in environmental voting. Using Ecuador's 2023 national referendum on halting oil extraction in Yasuní National Park, where men and women vote in separate booths enabling the first systematic analysis of gendered environmental behavior using real voting data, we examine when and why gender predispositions translate into distinct electoral choices. Using official booth-level results and a difference-in-differences design, we find that women are significantly more likely than men to support halting oil extraction in areas where local economies are not tied to oil. In oil-producing regions, this gender gap disappears entirely: material dependence on the industry overrides value-based differences for both men and women. Additional analyses of public goods provision and employment confirm that extractive activities influence political behavior through concrete economic channels rather than shifts in attitudes alone.           </p>
+            This paper examines when and why men and women vote differently on environmental matters, seeking to identify the determinants of the environmental gender gap. We study Ecuador's 2023 national referendum, which asked voters whether to halt oil extraction in Yasuni National Park, using official electoral data from gender-segregated voting booths.
+          </p>
 
           <p>
-            To further probe the individual-level mechanisms behind these patterns, we complement the electoral analysis with an original survey fielded in Ecuador. These findings contribute to electoral behavior theory by showing that gender gaps in environmental voting are not fixed properties of individuals, but conditional outcomes shaped by local economic context. More broadly, they help explain why cross-national studies often find weaker gender gaps in the Global South, and clarify when material interests displace values as the dominant driver of political choice.
+            In areas without oil extraction, women were significantly more likely than men to support halting extraction. However, this gender gap disappears in extractive regions, where both men and women show higher support for continued extraction. A follow-up survey explores whether material incentives or environmental motivations explain these patterns.
           </p>
 
           <div class="ecuador-interactive-layout">
@@ -1056,11 +1088,11 @@
         </div>
       </div>
 
-      <div class="row project">
+      <div class="row project" id="other-work">
         <div class="label">Other work</div>
 
         <div>
-          <div class="pub">
+          <div class="pub" id="elections-deforestation-project">
             <h3>Theory Building Through Scope Conditions Decision Tree: An Application on Elections and Deforestation</h3>
             <p>
               With Rens Chazottes. Social scientists routinely produce credibly identified causal estimates, yet struggle to aggregate them into cumulative theory. We propose a framework that formalizes each theoretical claim as a structured proposition linking a treatment contrast, an outcome, a causal mechanism, and a set of scope conditions, then organizes these claims into scope-condition decision trees.
@@ -1070,7 +1102,7 @@
             </p>
           </div>
 
-          <div class="pub">
+          <div class="pub" id="indigenous-mobilization-project">
             <h3>Environmental Mobilization of the Indigenous in Latin America</h3>
             <p>
               Why are indigenous populations more likely to mobilize for environmental causes than their non-indigenous counterparts? This paper examines two competing explanations: material interests and environmental values. Using survey evidence from Latin America and protest event data, I show that indigenous identity is consistently associated with higher levels of environmental concern and a greater willingness to engage in climate-related protest. I argue that this pattern can be understood through the joint influence of material grievances, linked to disproportionate exposure to environmental harm, and deeply rooted environmental values tied to identity and relational conceptions of nature.
@@ -1080,7 +1112,7 @@
             </p>
           </div>
 
-          <div class="pub">
+          <div class="pub" id="green-voting-project">
             <h3>Green Voting without a Green Party</h3>
             <p>
               With Lluis Orriols. Presented at APSA 2024. A conjoint experiment on how voters weigh environmental positions against other political issues in Spain.
@@ -1148,6 +1180,16 @@
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
+    document.querySelectorAll(".research-index a").forEach(link => {
+      link.addEventListener("click", event => {
+        event.preventDefault();
+        const target = document.querySelector(link.getAttribute("href"));
+        if (!target) return;
+
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
 
     document.querySelectorAll(".navbtn").forEach(button => {
       button.addEventListener("click", () => showPage(button.dataset.page));
