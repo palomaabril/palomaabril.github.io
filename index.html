@@ -1489,7 +1489,10 @@
             features: mainlandFeatures
           }).getBounds();
 
-          ecuadorMap.fitBounds(mainlandBounds.pad(0.18), { padding: [12, 12] });
+          ecuadorMap.fitBounds(mainlandBounds.pad(0.65), { padding: [36, 36] });
+          if (ecuadorMap.getZoom() > 6) {
+            ecuadorMap.setZoom(6);
+          }
           updateEcuadorLegend();
         })
         .catch(error => {
