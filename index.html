@@ -105,24 +105,25 @@
       text-decoration: none;
     }
 
-    .theme-controls {
+    .language-controls {
       display: flex;
       gap: 8px;
+      align-items: center;
     }
 
-    .theme-button {
-      border: 0;
+    .language-button {
+      border: 1px solid transparent;
       background: transparent;
+      color: #777;
       cursor: pointer;
-      padding: 2px;
+      font: inherit;
+      padding: 4px 6px;
     }
 
-    .theme-dot {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      display: inline-block;
-      border: 1px solid var(--line);
+    .language-button.active,
+    .language-button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     main {
@@ -692,7 +693,7 @@
         flex-wrap: wrap;
       }
 
-      .theme-controls {
+      .language-controls {
         width: 100%;
       }
 
@@ -753,16 +754,9 @@
       <button class="navbtn" data-page="teaching">Teaching</button>
       <a class="nav-link" href="cv.pdf" target="_blank" rel="noopener">CV</a>
 
-      <div class="theme-controls">
-        <button class="theme-button" data-color="#3A4F3D" aria-label="Green theme">
-          <span class="theme-dot" style="background:#3A4F3D"></span>
-        </button>
-        <button class="theme-button" data-color="#A0522D" aria-label="Terracotta theme">
-          <span class="theme-dot" style="background:#A0522D"></span>
-        </button>
-        <button class="theme-button" data-color="#0B2E5E" aria-label="Blue theme">
-          <span class="theme-dot" style="background:#0B2E5E"></span>
-        </button>
+      <div class="language-controls" aria-label="Language selector">
+        <button class="language-button active" type="button" data-lang="en">EN</button>
+        <button class="language-button" type="button" data-lang="es">ES</button>
       </div>
     </nav>
   </div>
@@ -1195,10 +1189,149 @@
       button.addEventListener("click", () => showPage(button.dataset.page));
     });
 
-    document.querySelectorAll(".theme-button").forEach(button => {
-      button.addEventListener("click", () => {
-        document.documentElement.style.setProperty("--accent", button.dataset.color);
+    const translationsEs = new Map([
+      ["Home", "Inicio"],
+      ["Research", "Investigacion"],
+      ["Teaching", "Docencia"],
+      ["PhD Candidate", "Doctoranda"],
+      ["European University Institute", "Instituto Universitario Europeo"],
+      ["Florence", "Florencia"],
+      ["I study how environmental damage, climate change, and natural resource extraction shape voting behavior, protest, and political mobilization in Latin America.", "Estudio como el dano ambiental, el cambio climatico y la extraccion de recursos naturales moldean el comportamiento electoral, la protesta y la movilizacion politica en America Latina."],
+      ["My research focuses especially on the trade-off between environmental concerns and economic interests for voters and elites.", "Mi investigacion se centra especialmente en el dilema entre preocupaciones ambientales e intereses economicos para votantes y elites."],
+      ["Download CV", "Descargar CV"],
+      ["Google Scholar", "Google Scholar"],
+      ["About", "Sobre mi"],
+      ["I am a third-year PhD candidate at the European University Institute in Florence, supervised by Professor Miriam Golden and Professor Elias Dinas. My research focuses on the effects of environmental damage and climate change on voting behavior in Latin America, particularly the trade-off between environmental concerns and economic interests for both voters and elites.", "Soy doctoranda de tercer ano en el Instituto Universitario Europeo en Florencia, supervisada por la profesora Miriam Golden y el profesor Elias Dinas. Mi investigacion se centra en los efectos del dano ambiental y del cambio climatico sobre el comportamiento electoral en America Latina, en particular el dilema entre preocupaciones ambientales e intereses economicos para votantes y elites."],
+      ["In addition to my research, I teach Basic Statistics and Mathematics, and practical classes on Game Theory at the School of Transnational Governance in Florence, and Applied Causal Inference at the University of Lucerne.", "Ademas de mi investigacion, enseno Estadistica y Matematicas Basicas, clases practicas de Teoria de Juegos en la School of Transnational Governance en Florencia, e Inferencia Causal Aplicada en la Universidad de Lucerna."],
+      ["I also collaborate with the NGOs Alianza por la Solidaridad and ActionAid on projects focused on climate justice. My work with them includes contributing to policy analysis, leading educational sessions on climate justice for high school and undergraduate students, and participating in public events and forums, such as sessions at the European Commission and UN climate conferences.", "Tambien colaboro con las ONG Alianza por la Solidaridad y ActionAid en proyectos centrados en justicia climatica. Mi trabajo con ellas incluye contribuir a analisis de politicas, dirigir sesiones educativas sobre justicia climatica para estudiantes de secundaria y universidad, y participar en eventos publicos y foros, incluidas sesiones en la Comision Europea y conferencias climaticas de Naciones Unidas."],
+      ["Contact", "Contacto"],
+      ["Email", "Correo"],
+      ["My projects study environmental voting, extraction, deforestation, indigenous mobilization, and climate politics.", "Mis proyectos estudian voto ambiental, extraccion, deforestacion, movilizacion indigena y politica climatica."],
+      ["Papers", "Articulos"],
+      ["Published Papers", "Articulos publicados"],
+      ["Economic vulnerability and emotions toward climate change: A case study of Spain", "Vulnerabilidad economica y emociones frente al cambio climatico: un estudio de caso de Espana"],
+      ["Read article", "Leer articulo"],
+      ["Project 01", "Proyecto 01"],
+      ["Under review", "En revision"],
+      ["Author:", "Autora:"],
+      ["From Economic Voting to Environmental Backlash: The Mayan Train and Electoral Dynamics in Mexico", "Del voto economico al backlash ambiental: el Tren Maya y las dinamicas electorales en Mexico"],
+      ["How do voters evaluate governments that deliver economic growth at environmental cost? Classic models of retrospective voting expect citizens to reward prosperity, yet development often comes at the expense of the environment, generating backlash. I argue that accountability under these trade-offs hinges on whether citizens directly capture the gains from growth.", "Como evaluan los votantes a gobiernos que generan crecimiento economico a costa del ambiente? Los modelos clasicos de voto retrospectivo esperan que la ciudadania premie la prosperidad, pero el desarrollo a menudo llega a expensas del ambiente y genera backlash. Argumento que la rendicion de cuentas bajo estos dilemas depende de si la ciudadania captura directamente los beneficios del crecimiento."],
+      ["When benefits are diffuse and environmental losses are visible and concentrated, voters punish governments; when benefits are direct and compensatory, they reward them even amid ecological damage. I test this argument using Mexico's Mayan Train, a macro-project that spurred regional expansion alongside severe deforestation. Combining satellite, firm, and electoral data in a difference-in-differences framework, I show that voters rewarded growth without deforestation, punished growth with ecological destruction, and rewarded the government where expropriation payments provided direct compensation.", "Cuando los beneficios son difusos y las perdidas ambientales son visibles y concentradas, los votantes castigan al gobierno; cuando los beneficios son directos y compensatorios, lo premian incluso en presencia de dano ecologico. Pongo a prueba este argumento con el Tren Maya en Mexico, un megaproyecto que impulso la expansion regional junto con una deforestacion severa. Combinando datos satelitales, empresariales y electorales en un diseno de diferencias en diferencias, muestro que los votantes premiaron el crecimiento sin deforestacion, castigaron el crecimiento con destruccion ecologica y premiaron al gobierno cuando los pagos por expropiacion ofrecieron compensacion directa."],
+      ["Presented at: EPSA 2025, POBI 2025", "Presentado en: EPSA 2025, POBI 2025"],
+      ["Electoral sections along the Mayan Train", "Secciones electorales a lo largo del Tren Maya"],
+      ["Click an electoral section to display its measured deforestation and the satellite comparison.", "Haz clic en una seccion electoral para ver su deforestacion medida y la comparacion satelital."],
+      ["lower measured deforestation", "menor deforestacion medida"],
+      ["medium measured deforestation", "deforestacion media medida"],
+      ["higher measured deforestation", "mayor deforestacion medida"],
+      ["Source: electoral-section shapefiles and satellite-based deforestation calculations.", "Fuente: shapefiles de secciones electorales y calculos de deforestacion basados en satelites."],
+      ["Select a section", "Selecciona una seccion"],
+      ["Click an electoral section on the map to display the deforestation estimate.", "Haz clic en una seccion electoral del mapa para ver la estimacion de deforestacion."],
+      ["Before · 2018", "Antes · 2018"],
+      ["After · 2024", "Despues · 2024"],
+      ["Measurement", "Medicion"],
+      ["Results", "Resultados"],
+      ["Click for explanation", "Ver explicacion"],
+      ["Hide explanation", "Ocultar explicacion"],
+      ["MORENA vote share", "Voto de MORENA"],
+      ["Deforestation exposure", "Exposicion a deforestacion"],
+      ["New companies", "Nuevas empresas"],
+      ["Ejido intersections", "Intersecciones ejidales"],
+      ["Project 02", "Proyecto 02"],
+      ["2023 referendum", "referendum de 2023"],
+      ["with Sara Dybesland & Deniz Tufur", "con Sara Dybesland y Deniz Tufur"],
+      ["Authors:", "Autoras:"],
+      ["When Oil Meets the Environment: How Gender Shapes Environmental Voting in Ecuador", "Cuando el petroleo se encuentra con el ambiente: como el genero moldea el voto ambiental en Ecuador"],
+      ["This paper examines when and why men and women vote differently on environmental matters, seeking to identify the determinants of the environmental gender gap. We study Ecuador's 2023 national referendum, which asked voters whether to halt oil extraction in Yasuni National Park, using official electoral data from gender-segregated voting booths.", "Este articulo examina cuando y por que hombres y mujeres votan de manera diferente en temas ambientales, con el objetivo de identificar los determinantes de la brecha de genero ambiental. Estudiamos el referendum nacional de Ecuador de 2023, que pregunto a los votantes si debia detenerse la extraccion petrolera en el Parque Nacional Yasuni, usando datos electorales oficiales de juntas separadas por genero."],
+      ["In areas without oil extraction, women were significantly more likely than men to support halting extraction. However, this gender gap disappears in extractive regions, where both men and women show higher support for continued extraction. A follow-up survey explores whether material incentives or environmental motivations explain these patterns.", "En areas sin extraccion petrolera, las mujeres fueron significativamente mas propensas que los hombres a apoyar la suspension de la extraccion. Sin embargo, esta brecha de genero desaparece en regiones extractivas, donde tanto hombres como mujeres muestran mayor apoyo a continuar la extraccion. Una encuesta de seguimiento explora si estos patrones se explican por incentivos materiales o motivaciones ambientales."],
+      ["Yasuni referendum maps", "Mapas del referendum del Yasuni"],
+      ["Choose a layer and click a parroquia to see the 2023 Yes vote, male and female Yes vote shares, and the gender gap.", "Elige una capa y haz clic en una parroquia para ver el voto Yes de 2023, el voto Yes de hombres y mujeres, y la brecha de genero."],
+      ["Yes vote", "Voto Yes"],
+      ["Gender gap", "Brecha de genero"],
+      ["lower Yes vote", "menor voto Yes"],
+      ["higher Yes vote", "mayor voto Yes"],
+      ["Gender gap by oil status", "Brecha de genero por zona petrolera"],
+      ["Adjusted Male - Female gap in percentage-point Yes support. Negative values mean women were more likely than men to vote Yes.", "Brecha ajustada hombre - mujer en puntos porcentuales de apoyo al Yes. Los valores negativos indican que las mujeres fueron mas propensas que los hombres a votar Yes."],
+      ["Gender gap in % Yes", "Brecha de genero en % Yes"],
+      ["Male - Female, adjusted. Stars = Holm-adjusted significance.", "Hombre - mujer, ajustado. Estrellas = significancia ajustada por Holm."],
+      ["Non-oil", "No petrolera"],
+      ["Oil", "Petrolera"],
+      ["Distance to Yasuni and Yes vote", "Distancia al Yasuni y voto Yes"],
+      ["Other work", "Otros trabajos"],
+      ["Theory Building Through Scope Conditions Decision Tree: An Application on Elections and Deforestation", "Construccion teorica mediante arboles de decision de condiciones de alcance: una aplicacion a elecciones y deforestacion"],
+      ["With Rens Chazottes. Social scientists routinely produce credibly identified causal estimates, yet struggle to aggregate them into cumulative theory. We propose a framework that formalizes each theoretical claim as a structured proposition linking a treatment contrast, an outcome, a causal mechanism, and a set of scope conditions, then organizes these claims into scope-condition decision trees.", "Con Rens Chazottes. Las ciencias sociales producen con frecuencia estimaciones causales creiblemente identificadas, pero tienen dificultades para agregarlas en teoria acumulativa. Proponemos un marco que formaliza cada argumento teorico como una proposicion estructurada que vincula un contraste de tratamiento, un resultado, un mecanismo causal y un conjunto de condiciones de alcance, y organiza esos argumentos en arboles de decision de condiciones de alcance."],
+      ["We apply the framework to a pre-registered systematic review of elections and deforestation, a literature marked by theoretical fragmentation and competing predictions. The analysis shows that many apparent disagreements reflect differences in implicit scope conditions rather than genuine empirical contradictions, and identifies several plausible causal regimes that remain empirically underexplored.", "Aplicamos el marco a una revision sistematica preregistrada sobre elecciones y deforestacion, una literatura caracterizada por fragmentacion teorica y predicciones contrapuestas. El analisis muestra que muchos desacuerdos aparentes reflejan diferencias en condiciones de alcance implicitas mas que contradicciones empiricas reales, e identifica varios regimenes causales plausibles que siguen empiricamente subexplorados."],
+      ["Environmental Mobilization of the Indigenous in Latin America", "Movilizacion ambiental de los pueblos indigenas en America Latina"],
+      ["Why are indigenous populations more likely to mobilize for environmental causes than their non-indigenous counterparts? This paper examines two competing explanations: material interests and environmental values. Using survey evidence from Latin America and protest event data, I show that indigenous identity is consistently associated with higher levels of environmental concern and a greater willingness to engage in climate-related protest. I argue that this pattern can be understood through the joint influence of material grievances, linked to disproportionate exposure to environmental harm, and deeply rooted environmental values tied to identity and relational conceptions of nature.", "Por que las poblaciones indigenas tienen mayor probabilidad de movilizarse por causas ambientales que sus contrapartes no indigenas? Este articulo examina dos explicaciones en competencia: intereses materiales y valores ambientales. Usando evidencia de encuestas en America Latina y datos de eventos de protesta, muestro que la identidad indigena se asocia de manera consistente con mayores niveles de preocupacion ambiental y una mayor disposicion a participar en protestas climaticas. Argumento que este patron puede entenderse a traves de la influencia conjunta de agravios materiales, vinculados a una exposicion desproporcionada al dano ambiental, y valores ambientales profundamente arraigados en la identidad y en concepciones relacionales de la naturaleza."],
+      ["To disentangle these mechanisms, I combine observational analysis with experimental evidence. The study ultimately tests whether mobilization is primarily driven by threats to livelihoods or by threats to environmental values. The empirical strategy culminates in a survey experiment conducted in Ecuador, where participants are randomly exposed to material or value-based frames of environmental harm. This design allows for the identification of the causal impact of each mechanism on individuals' willingness to protest, providing new evidence on the drivers of environmental mobilization in the Global South.", "Para distinguir estos mecanismos, combino analisis observacional con evidencia experimental. El estudio evalua si la movilizacion esta impulsada principalmente por amenazas a los medios de vida o por amenazas a los valores ambientales. La estrategia empirica culmina en un experimento de encuesta realizado en Ecuador, donde los participantes son expuestos aleatoriamente a encuadres materiales o basados en valores sobre el dano ambiental. Este diseno permite identificar el impacto causal de cada mecanismo sobre la disposicion individual a protestar, aportando nueva evidencia sobre los motores de la movilizacion ambiental en el Sur Global."],
+      ["Green Voting without a Green Party", "Voto verde sin partido verde"],
+      ["With Lluis Orriols. Presented at APSA 2024. A conjoint experiment on how voters weigh environmental positions against other political issues in Spain.", "Con Lluis Orriols. Presentado en APSA 2024. Un experimento conjoint sobre como los votantes ponderan posiciones ambientales frente a otros temas politicos en Espana."],
+      ["European University Institute / School of Transnational Governance", "Instituto Universitario Europeo / School of Transnational Governance"],
+      ["Basic Statistics and Mathematics; practical classes on Game Theory.", "Estadistica y Matematicas Basicas; clases practicas de Teoria de Juegos."],
+      ["University of Lucerne", "Universidad de Lucerna"],
+      ["Applied Causal Inference.", "Inferencia Causal Aplicada."],
+      ["Close", "Cerrar"],
+      ["These figures summarize the main electoral results and mechanisms. Click outside this panel or use Close to return to the project page.", "Estas figuras resumen los principales resultados electorales y mecanismos. Haz clic fuera del panel o usa Cerrar para volver a la pagina del proyecto."],
+      ["State:", "Estado:"],
+      ["Municipality:", "Municipio:"],
+      ["Deforestation:", "Deforestacion:"],
+      ["Variable:", "Variable:"],
+      ["Section", "Seccion"],
+      ["not detected", "no detectada"],
+      ["The GeoJSON file could not be loaded. Check that", "No se pudo cargar el archivo GeoJSON. Comprueba que"],
+      ["exists in the GitHub repository.", "exista en el repositorio de GitHub."],
+      ["Canton:", "Canton:"],
+      ["Province:", "Provincia:"],
+      ["Yes vote:", "Voto Yes:"],
+      ["Male Yes vote:", "Voto Yes hombres:"],
+      ["Female Yes vote:", "Voto Yes mujeres:"],
+      ["Gender gap:", "Brecha de genero:"],
+      ["Layer: male minus female Yes vote percentage-point gap by parroquia. Colors are clipped at +/-8 p.p. so local differences are easier to see.", "Capa: brecha en puntos porcentuales entre hombres y mujeres en el voto Yes por parroquia. Los colores estan recortados en +/-8 p.p. para que las diferencias locales sean mas visibles."],
+      ["Layer: percentage of Yes vote in the 2023 Yasuni referendum by parroquia. Colors are clipped from 48% to 67% so variation is easier to see.", "Capa: porcentaje de voto Yes en el referendum del Yasuni de 2023 por parroquia. Los colores estan recortados entre 48% y 67% para que la variacion sea mas visible."],
+      ["women more pro-Yes", "mujeres mas pro-Yes"],
+      ["small or no gap", "brecha pequena o nula"],
+      ["men more pro-Yes", "hombres mas pro-Yes"]
+    ]);
+
+    const translationsEn = new Map(Array.from(translationsEs, ([en, es]) => [es, en]));
+    let currentLanguage = "en";
+
+    function translateTextNode(node, dictionary) {
+      const trimmed = node.nodeValue.replace(/\s+/g, " ").trim();
+      if (!trimmed || !dictionary.has(trimmed)) return;
+      node.nodeValue = node.nodeValue.replace(trimmed, dictionary.get(trimmed));
+    }
+
+    function setLanguage(lang) {
+      const dictionary = lang === "es" ? translationsEs : translationsEn;
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: node => {
+          const parent = node.parentElement;
+          if (!parent || ["SCRIPT", "STYLE"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
       });
+
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node => translateTextNode(node, dictionary));
+
+      currentLanguage = lang;
+      document.documentElement.lang = lang;
+      document.title = lang === "es"
+        ? "Paloma Abril Poncela | Doctoranda | Instituto Universitario Europeo"
+        : "Paloma Abril Poncela | PhD Candidate | European University Institute";
+      document.querySelectorAll(".language-button").forEach(button => {
+        button.classList.toggle("active", button.dataset.lang === lang);
+      });
+      updateEcuadorLegend();
+    }
+
+    function t(text) {
+      return currentLanguage === "es" ? translationsEs.get(text) || text : text;
+    }
+
+    document.querySelectorAll(".language-button").forEach(button => {
+      button.addEventListener("click", () => setLanguage(button.dataset.lang));
     });
 
     document.querySelectorAll(".image-option").forEach(button => {
@@ -1210,7 +1343,7 @@
         button.classList.add("active");
         document.getElementById("selected-qgis-image").src = button.dataset.image;
         document.getElementById("selected-qgis-image").alt = button.dataset.alt;
-        document.getElementById("selected-qgis-caption").innerHTML = button.dataset.label;
+        document.getElementById("selected-qgis-caption").innerHTML = t(button.dataset.label);
       });
     });
 
@@ -1218,7 +1351,7 @@
       const panel = document.getElementById("results-explanation-panel");
       const isOpen = panel.classList.toggle("open");
       event.target.setAttribute("aria-expanded", String(isOpen));
-      event.target.textContent = isOpen ? "Hide explanation" : "Click for explanation";
+      event.target.textContent = isOpen ? t("Hide explanation") : t("Click for explanation");
     });
 
     const resultsModal = document.getElementById("results-modal");
@@ -1226,8 +1359,8 @@
       button.addEventListener("click", () => {
         document.getElementById("results-modal-image").src = button.dataset.resultsImage;
         document.getElementById("results-modal-image").alt = button.dataset.resultsAlt;
-        document.getElementById("results-modal-title").textContent = button.dataset.resultsTitle;
-        document.getElementById("results-modal-caption").textContent = button.dataset.resultsTitle;
+        document.getElementById("results-modal-title").textContent = t(button.dataset.resultsTitle);
+        document.getElementById("results-modal-caption").textContent = t(button.dataset.resultsTitle);
         resultsModal.classList.add("open");
         resultsModal.setAttribute("aria-hidden", "false");
       });
@@ -1319,7 +1452,7 @@
       const d = getDeforestationValue(properties);
 
       document.getElementById("selected-section-title").textContent =
-        "Section " + sectionId;
+        t("Section") + " " + sectionId;
 
       const state =
         properties.state_name ||
@@ -1347,10 +1480,10 @@
           : "m²";
 
       document.getElementById("selected-section-info").innerHTML = `
-        <strong>State:</strong> ${state}<br>
-        <strong>Municipality:</strong> ${municipality}<br>
-        <strong>Deforestation:</strong> ${formattedDeforestation} ${unit}<br>
-        <strong>Variable:</strong> ${d.name || "not detected"}
+        <strong>${t("State:")}</strong> ${state}<br>
+        <strong>${t("Municipality:")}</strong> ${municipality}<br>
+        <strong>${t("Deforestation:")}</strong> ${formattedDeforestation} ${unit}<br>
+        <strong>${t("Variable:")}</strong> ${d.name || t("not detected")}
       `;
     }
 
@@ -1412,7 +1545,7 @@
         })
         .catch(error => {
           document.getElementById("selected-section-info").innerHTML =
-            "The GeoJSON file could not be loaded. Check that <br><strong>assets/maps/sections_deforestation_light.geojson</strong><br> exists in the GitHub repository.";
+            t("The GeoJSON file could not be loaded. Check that") + " <br><strong>assets/maps/sections_deforestation_light.geojson</strong><br> " + t("exists in the GitHub repository.");
           console.error(error);
         });
     }
@@ -1460,12 +1593,12 @@
       const p = feature.properties;
       layer.bindPopup(`
         <strong>${p.parroquia_name || "Parroquia"}</strong><br>
-        Canton: ${p.canton || "NA"}<br>
-        Province: ${p.provincia || "NA"}<br>
-        Yes vote: ${formatPct(p.yes_pct_2023)}<br>
-        Male Yes vote: ${formatPct(p.pct_si_male)}<br>
-        Female Yes vote: ${formatPct(p.pct_si_female)}<br>
-        Gender gap: ${formatPct(p.gender_gap_m_minus_f)}
+        ${t("Canton:")} ${p.canton || "NA"}<br>
+        ${t("Province:")} ${p.provincia || "NA"}<br>
+        ${t("Yes vote:")} ${formatPct(p.yes_pct_2023)}<br>
+        ${t("Male Yes vote:")} ${formatPct(p.pct_si_male)}<br>
+        ${t("Female Yes vote:")} ${formatPct(p.pct_si_female)}<br>
+        ${t("Gender gap:")} ${formatPct(p.gender_gap_m_minus_f)}
       `);
     }
 
@@ -1475,17 +1608,17 @@
 
       if (ecuadorMode === "gap") {
         legend.innerHTML = `
-          <div class="legend-row"><span class="legend-swatch" style="background:#2166AC"></span>women more pro-Yes</div>
-          <div class="legend-row"><span class="legend-swatch" style="background:#F7F7F7"></span>small or no gap</div>
-          <div class="legend-row"><span class="legend-swatch" style="background:#B2182B"></span>men more pro-Yes</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#2166AC"></span>${t("women more pro-Yes")}</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#F7F7F7"></span>${t("small or no gap")}</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#B2182B"></span>${t("men more pro-Yes")}</div>
         `;
-        note.textContent = "Layer: male minus female Yes vote percentage-point gap by parroquia. Colors are clipped at +/-8 p.p. so local differences are easier to see.";
+        note.textContent = t("Layer: male minus female Yes vote percentage-point gap by parroquia. Colors are clipped at +/-8 p.p. so local differences are easier to see.");
       } else {
         legend.innerHTML = `
-          <div class="legend-row"><span class="legend-swatch" style="background:#FDE0DD"></span>lower Yes vote</div>
-          <div class="legend-row"><span class="legend-swatch" style="background:#99000D"></span>higher Yes vote</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#FDE0DD"></span>${t("lower Yes vote")}</div>
+          <div class="legend-row"><span class="legend-swatch" style="background:#99000D"></span>${t("higher Yes vote")}</div>
         `;
-        note.textContent = "Layer: percentage of Yes vote in the 2023 Yasuni referendum by parroquia. Colors are clipped from 48% to 67% so variation is easier to see.";
+        note.textContent = t("Layer: percentage of Yes vote in the 2023 Yasuni referendum by parroquia. Colors are clipped from 48% to 67% so variation is easier to see.");
       }
     }
 
