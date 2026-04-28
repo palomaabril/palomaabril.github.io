@@ -94,7 +94,10 @@ shape_sql <- write_sql(
   "import_parroquias.sql",
   paste(
     "SELECT *,",
-    "printf('%s%03d%d', CODPRO, CAST(CODCAN AS INTEGER), CAST(CODPAR AS INTEGER)) AS parroquia_id",
+    # CNE/CODPAR IDs are not encoded consistently across all cantons in the vote file.
+    # Keep both observed forms and prefer the CNE-style key, then fall back to the older padded key.
+    "printf('%s%d%s', CODPRO, CAST(CODCAN AS INTEGER), CODPAR) AS parroquia_id_cne,",
+    "printf('%s%03d%d', CODPRO, CAST(CODCAN AS INTEGER), CAST(CODPAR AS INTEGER)) AS parroquia_id_old",
     "FROM \"LIMITE_PARROQUIAL_CONALI_CNE_2022\""
   )
 )
@@ -122,11 +125,20 @@ diag_csv <- file.path(tmp_dir, "ecuador_join_diagnostics.csv")
 diag_sql <- write_sql(
   "diagnose_ecuador_join.sql",
   paste(
+    "WITH matched AS (",
+    "SELECT v.parroquia_id FROM votes v INNER JOIN parroquias p ON v.parroquia_id = p.parroquia_id_cne",
+    "UNION",
+    "SELECT v.parroquia_id FROM votes v INNER JOIN parroquias p ON v.parroquia_id = p.parroquia_id_old",
+    "), shape_ids AS (",
+    "SELECT parroquia_id_cne AS parroquia_id FROM parroquias",
+    "UNION",
+    "SELECT parroquia_id_old AS parroquia_id FROM parroquias",
+    ")",
     "SELECT",
     "(SELECT COUNT(*) FROM votes) AS vote_parroquias,",
     "(SELECT COUNT(*) FROM parroquias) AS shape_parroquias,",
-    "(SELECT COUNT(DISTINCT v.parroquia_id) FROM votes v INNER JOIN parroquias p ON v.parroquia_id = p.parroquia_id) AS matched_parroquias,",
-    "(SELECT COUNT(DISTINCT v.parroquia_id) FROM votes v LEFT JOIN parroquias p ON v.parroquia_id = p.parroquia_id WHERE p.parroquia_id IS NULL) AS unmatched_vote_parroquias"
+    "(SELECT COUNT(DISTINCT parroquia_id) FROM matched) AS matched_parroquias,",
+    "(SELECT COUNT(DISTINCT v.parroquia_id) FROM votes v LEFT JOIN shape_ids s ON v.parroquia_id = s.parroquia_id WHERE s.parroquia_id IS NULL) AS unmatched_vote_parroquias"
   )
 )
 run_cmd(ogr2ogr, c("-f", "CSV", diag_csv, gpkg, "-dialect", "SQLite", "-sql", diag_sql))
@@ -138,21 +150,40 @@ if (diag$matched_parroquias == 0) stop("Join produced zero matched parroquias.")
 export_sql <- write_sql(
   "export_ecuador.sql",
   paste(
+    "SELECT * FROM (",
     "SELECT",
-    "p.parroquia_id,",
-    "COALESCE(v.parroquia_name, p.PARROQUIA) AS parroquia_name,",
-    "COALESCE(v.canton, p.CANTON) AS canton,",
-    "COALESCE(v.provincia, p.PROVINCIA) AS provincia,",
-    "ROUND(v.yes_pct_2023, 3) AS yes_pct_2023,",
-    "CAST(v.yes_votes AS INTEGER) AS yes_votes,",
-    "CAST(v.no_votes AS INTEGER) AS no_votes,",
-    "ROUND(v.pct_si_male, 3) AS pct_si_male,",
-    "ROUND(v.pct_si_female, 3) AS pct_si_female,",
-    "ROUND(v.gender_gap_m_minus_f, 3) AS gender_gap_m_minus_f,",
+    "vc.parroquia_id AS parroquia_id,",
+    "COALESCE(vc.parroquia_name, p.PARROQUIA) AS parroquia_name,",
+    "COALESCE(vc.canton, p.CANTON) AS canton,",
+    "COALESCE(vc.provincia, p.PROVINCIA) AS provincia,",
+    "ROUND(vc.yes_pct_2023, 3) AS yes_pct_2023,",
+    "CAST(vc.yes_votes AS INTEGER) AS yes_votes,",
+    "CAST(vc.no_votes AS INTEGER) AS no_votes,",
+    "ROUND(vc.pct_si_male, 3) AS pct_si_male,",
+    "ROUND(vc.pct_si_female, 3) AS pct_si_female,",
+    "ROUND(vc.gender_gap_m_minus_f, 3) AS gender_gap_m_minus_f,",
     "ST_SimplifyPreserveTopology(p.GEOMETRY, 0.001) AS GEOMETRY",
     "FROM parroquias p",
-    "INNER JOIN votes v ON p.parroquia_id = v.parroquia_id",
-    "WHERE v.yes_pct_2023 IS NOT NULL"
+    "INNER JOIN votes vc ON p.parroquia_id_cne = vc.parroquia_id",
+    "WHERE vc.yes_pct_2023 IS NOT NULL",
+    "UNION ALL",
+    "SELECT",
+    "vo.parroquia_id AS parroquia_id,",
+    "COALESCE(vo.parroquia_name, p.PARROQUIA) AS parroquia_name,",
+    "COALESCE(vo.canton, p.CANTON) AS canton,",
+    "COALESCE(vo.provincia, p.PROVINCIA) AS provincia,",
+    "ROUND(vo.yes_pct_2023, 3) AS yes_pct_2023,",
+    "CAST(vo.yes_votes AS INTEGER) AS yes_votes,",
+    "CAST(vo.no_votes AS INTEGER) AS no_votes,",
+    "ROUND(vo.pct_si_male, 3) AS pct_si_male,",
+    "ROUND(vo.pct_si_female, 3) AS pct_si_female,",
+    "ROUND(vo.gender_gap_m_minus_f, 3) AS gender_gap_m_minus_f,",
+    "ST_SimplifyPreserveTopology(p.GEOMETRY, 0.001) AS GEOMETRY",
+    "FROM parroquias p",
+    "INNER JOIN votes vo ON p.parroquia_id_old = vo.parroquia_id",
+    "LEFT JOIN votes vc ON p.parroquia_id_cne = vc.parroquia_id",
+    "WHERE vo.yes_pct_2023 IS NOT NULL AND vc.parroquia_id IS NULL",
+    ")"
   )
 )
 if (file.exists(output_geojson)) unlink(output_geojson)
