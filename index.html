@@ -691,15 +691,21 @@
 
       .image-header img {
         height: 150px;
+        object-position: left center;
       }
 
       .about-with-photo {
         grid-template-columns: 1fr;
       }
 
+      .about-with-photo > div {
+        grid-row: 2;
+      }
+
       .about-photo {
         width: 145px;
         height: 145px;
+        grid-row: 1;
       }
 
       .label {
@@ -790,23 +796,6 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="label">Highlights</div>
-        <div>
-          <a class="card" href="#" onclick="showPage('research'); return false;">
-            <div class="smallcaps">Featured project</div>
-            <h3>From Economic Voting to Environmental Backlash</h3>
-            <p>How voters respond when a government delivers economic growth at environmental cost, using Mexico's Mayan Train as a case.</p>
-          </a>
-
-          <a class="card" href="#" onclick="showPage('research'); return false;">
-            <div class="smallcaps">Interactive map</div>
-            <h3>Electoral sections and deforestation along the Mayan Train</h3>
-            <p>Click sections to see measured deforestation and satellite-image comparisons.</p>
-          </a>
-        </div>
-      </div>
-
       <div class="row footer">
         <div class="label">Contact</div>
         <div class="links">
@@ -829,6 +818,20 @@
           <p class="lede">
             My projects study environmental voting, extraction, deforestation, indigenous mobilization, and climate politics.
           </p>
+        </div>
+      </div>
+
+      <div class="row project">
+        <div class="label">Published Papers</div>
+
+        <div>
+          <div class="pub">
+            <h3>Economic vulnerability and emotions toward climate change: A case study of Spain</h3>
+            <p>
+              Fernandez, J. J., Orriols, L., &amp; Abril, P. (2025). <em>Journal of Environmental Psychology</em>, 102537.
+            </p>
+            <a href="https://www.sciencedirect.com/science/article/pii/S0272494425000209" target="_blank" rel="noopener">Read article</a>
+          </div>
         </div>
       </div>
 
@@ -1046,27 +1049,16 @@
       </div>
 
       <div class="row project">
-        <div class="label">Articles</div>
-
-        <div>
-          <div class="pub">
-            <h3>Economic vulnerability and emotions toward climate change: A case study of Spain</h3>
-            <p>
-              Fernandez, J. J., Orriols, L., &amp; Abril, P. (2025). <em>Journal of Environmental Psychology</em>, 102537.
-            </p>
-            <a href="https://www.sciencedirect.com/science/article/pii/S0272494425000209" target="_blank" rel="noopener">Read article</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="row project">
         <div class="label">Other work</div>
 
         <div>
           <div class="pub">
-            <h3>Election and Deforestation: A Systematic Literature Review of Empirical and Theoretical Evidence</h3>
+            <h3>Theory Building Through Scope Conditions Decision Tree: An Application on Elections and Deforestation</h3>
             <p>
-              With Rens Chazottes. This systematic literature review explores how and why elections influence deforestation dynamics, synthesizing theoretical arguments and empirical findings from political ecology and environmental governance research.
+              With Rens Chazottes. Social scientists routinely produce credibly identified causal estimates, yet struggle to aggregate them into cumulative theory. We propose a framework that formalizes each theoretical claim as a structured proposition linking a treatment contrast, an outcome, a causal mechanism, and a set of scope conditions, then organizes these claims into scope-condition decision trees.
+            </p>
+            <p>
+              We apply the framework to a pre-registered systematic review of elections and deforestation, a literature marked by theoretical fragmentation and competing predictions. The analysis shows that many apparent disagreements reflect differences in implicit scope conditions rather than genuine empirical contradictions, and identifies several plausible causal regimes that remain empirically underexplored.
             </p>
           </div>
 
@@ -1394,7 +1386,7 @@
         return interpolateColor(value, 0, cap, [247, 247, 247], [178, 24, 43]);
       }
 
-      return interpolateColor(Number(p.yes_pct_2023), 20, 85, [253, 224, 221], [153, 0, 13]);
+      return interpolateColor(Number(p.yes_pct_2023), 48, 67, [253, 224, 221], [153, 0, 13]);
     }
 
     function styleEcuador(feature) {
@@ -1440,7 +1432,7 @@
           <div class="legend-row"><span class="legend-swatch" style="background:#FDE0DD"></span>lower Yes vote</div>
           <div class="legend-row"><span class="legend-swatch" style="background:#99000D"></span>higher Yes vote</div>
         `;
-        note.textContent = "Layer: percentage of Yes vote in the 2023 Yasuni referendum by parroquia.";
+        note.textContent = "Layer: percentage of Yes vote in the 2023 Yasuni referendum by parroquia. Colors are clipped from 48% to 67% so variation is easier to see.";
       }
     }
 
@@ -1480,7 +1472,15 @@
             style: styleEcuador,
             onEachFeature: bindEcuadorPopup
           }).addTo(ecuadorMap);
-          ecuadorMap.fitBounds(ecuadorLayer.getBounds(), { padding: [12, 12] });
+          const mainlandFeatures = data.features.filter(feature => {
+            return String(feature.properties.provincia || "").toUpperCase() !== "GALAPAGOS";
+          });
+          const mainlandBounds = L.geoJSON({
+            type: "FeatureCollection",
+            features: mainlandFeatures
+          }).getBounds();
+
+          ecuadorMap.fitBounds(mainlandBounds, { padding: [12, 12] });
           updateEcuadorLegend();
         })
         .catch(error => {
